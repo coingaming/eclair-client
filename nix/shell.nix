@@ -15,17 +15,14 @@ let overlays = import ./overlay.nix {
 in
 with pkgs';
 
-let haskell-ide = import (
-      fetchTarball "https://github.com/tim2CF/ultimate-haskell-ide/tarball/master"
-    ) {};
-in
-
 stdenv.mkDerivation {
   name = "eclair-client-env";
   buildInputs = [
     /* IDE */
     haskell-ide
     /* Apps */
+    bitcoin
+    eclair
     postgresql
     /* Utils */
     git

@@ -1,7 +1,13 @@
 .stack-work/
 *~
-postgres
-postgres_data
+postgres/
+postgres_data/
+.bitcoin/*
+!.bitcoin/bitcoin.conf
+.eclair-*/*
+!.eclair-*/eclair.conf
 dist*
 postgres.log
 result
+nohup.out
+.DS_Store
