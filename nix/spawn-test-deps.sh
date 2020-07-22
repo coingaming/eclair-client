@@ -2,6 +2,34 @@
 
 set -m
 
+#
+# Bitcoind
+#
+
+echo "starting bitcoind..."
+bitcoind -datadir=$BTCD_DIR
+echo "sleeping for 3s to prevent bitcoind/Eclair race condition..."
+sleep 3;
+bitcoin-cli generatetoaddress 101 2NE5UEcr8VJMby5G2ACRDzwTHPybeHuZ4kw
+bitcoin-cli getblockchaininfo
+echo "bitcoind has been started!"
+
+#
+# Eclair
+#
+
+THIS_DIR="$(pwd)"
+
+echo "starting eclair-merchant..."
+nohup eclair-node.sh -Declair.datadir=$ECLAIR_MERCHANT_DIR > $THIS_DIR/.eclair-merchant/stdout.log &
+echo "eclair-merchant has been started!"
+
+echo "starting eclair-customer..."
+nohup eclair-node.sh -Declair.datadir=$ECLAIR_CUSTOMER_DIR > $THIS_DIR/.eclair-customer/stdout.log &
+echo "eclair-customer has been started!"
+
+echo "spawn-test-deps executed"
+
 export PATH=$PATH:/bin/
 export PGDATA=$PWD/postgres
 export PGHOST=/tmp/postgres
