@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8cde14001025d3891a83d7712e3fee3142bf742bf943a75f5e9849bef2e5232a
+-- hash: bb06e5a58ea111f599f5ab948ecb1b03d494cf6b1bb32bb50cb5c6cc2b129577
 
 name:           eclair-client
 version:        0.1.0.0
@@ -27,24 +27,27 @@ source-repository head
 
 library
   exposed-modules:
-      EclairClient.Data.EclairEnv
+      EclairClient
       EclairClient.Data.Type
       EclairClient.Import
       EclairClient.Import.External
-      Lib
+      EclairClient.RPC
   other-modules:
       Paths_eclair_client
   hs-source-dirs:
       src
-  default-extensions: NoImplicitPrelude MultiParamTypeClasses LambdaCase OverloadedStrings ScopedTypeVariables
+  default-extensions: NoImplicitPrelude MultiParamTypeClasses LambdaCase OverloadedStrings ScopedTypeVariables TupleSections
   ghc-options: -Weverything -Werror -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-missing-local-signatures -Wno-monomorphism-restriction
   build-depends:
       async
     , base >=4.7 && <5
+    , base64-bytestring
     , bytestring
     , chronos
     , concur-core
     , concur-replica
+    , conduit
+    , connection
     , containers
     , envparse
     , esqueleto
@@ -52,6 +55,10 @@ library
     , file-embed
     , hspec
     , hspec-wai
+    , http-client
+    , http-client-tls
+    , http-conduit
+    , http-types
     , katip
     , lens
     , microlens
@@ -67,6 +74,7 @@ library
     , template-haskell
     , text
     , time
+    , tls
     , unbounded-delays
     , universum
     , unliftio
@@ -83,15 +91,18 @@ test-suite eclair-client-test
       Paths_eclair_client
   hs-source-dirs:
       test
-  default-extensions: NoImplicitPrelude MultiParamTypeClasses LambdaCase OverloadedStrings ScopedTypeVariables
+  default-extensions: NoImplicitPrelude MultiParamTypeClasses LambdaCase OverloadedStrings ScopedTypeVariables TupleSections
   ghc-options: -Weverything -Werror -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-missing-local-signatures -Wno-monomorphism-restriction -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       async
     , base >=4.7 && <5
+    , base64-bytestring
     , bytestring
     , chronos
     , concur-core
     , concur-replica
+    , conduit
+    , connection
     , containers
     , eclair-client
     , envparse
@@ -100,6 +111,10 @@ test-suite eclair-client-test
     , file-embed
     , hspec
     , hspec-wai
+    , http-client
+    , http-client-tls
+    , http-conduit
+    , http-types
     , katip
     , lens
     , microlens
@@ -115,6 +130,7 @@ test-suite eclair-client-test
     , template-haskell
     , text
     , time
+    , tls
     , unbounded-delays
     , universum
     , unliftio

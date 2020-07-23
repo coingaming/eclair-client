@@ -71,6 +71,7 @@ import Katip as X
     registerScribe,
     runKatipContextT,
   )
+import Network.HTTP.Types.Header as X (Header)
 import Network.Wai as X (Middleware)
 import Universum as X hiding ((^.), atomically, on, set)
 import UnliftIO as X (MonadUnliftIO (..), UnliftIO (..), withRunInIO)

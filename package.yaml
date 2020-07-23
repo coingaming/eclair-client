@@ -49,8 +49,9 @@ dependencies:
 - lens
 - microlens
 # bytes and text
-- bytestring
 - text
+- bytestring
+- base64-bytestring
 # threads
 - async
 - stm
@@ -58,6 +59,14 @@ dependencies:
 # th
 - template-haskell
 - file-embed
+# network
+- tls
+- connection
+- http-client
+- http-client-tls
+- http-types
+- http-conduit
+- conduit
 # other
 - unliftio
 - containers
@@ -72,6 +81,7 @@ library:
   - LambdaCase
   - OverloadedStrings
   - ScopedTypeVariables
+  - TupleSections
   ghc-options:
   # For details on warnings: https://downloads.haskell.org/~ghc/master/users-guide/using-warnings.html
   # Enable all warnings with -Weverything, then disable the ones we don’t care about
@@ -99,6 +109,7 @@ tests:
     - LambdaCase
     - OverloadedStrings
     - ScopedTypeVariables
+    - TupleSections
     ghc-options:
     # For details on warnings: https://downloads.haskell.org/~ghc/master/users-guide/using-warnings.html
     # Enable all warnings with -Weverything, then disable the ones we don’t care about
