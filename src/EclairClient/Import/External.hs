@@ -1,6 +1,5 @@
-module Eclairclient.Import.External (module X) where
+module EclairClient.Import.External (module X) where
 
-import Network.Wai as X (Middleware)
 import Chronos as X (Timespan (..), stopwatch)
 import Control.Concurrent.Async as X
   ( Async (..),
@@ -72,5 +71,6 @@ import Katip as X
     registerScribe,
     runKatipContextT,
   )
-import Universum as X hiding ((^.), on, set, atomically)
+import Network.Wai as X (Middleware)
+import Universum as X hiding ((^.), atomically, on, set)
 import UnliftIO as X (MonadUnliftIO (..), UnliftIO (..), withRunInIO)

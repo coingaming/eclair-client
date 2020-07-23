@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 57d498f7fe882e47930766205949895f64825d0694043e300c96a7718e1678de
+-- hash: 8cde14001025d3891a83d7712e3fee3142bf742bf943a75f5e9849bef2e5232a
 
 name:           eclair-client
 version:        0.1.0.0
@@ -27,12 +27,10 @@ source-repository head
 
 library
   exposed-modules:
-      Eclairclient.Class
-      Eclairclient.Data.AppM
-      Eclairclient.Data.Env
-      Eclairclient.Data.Type
-      Eclairclient.Import
-      Eclairclient.Import.External
+      EclairClient.Data.EclairEnv
+      EclairClient.Data.Type
+      EclairClient.Import
+      EclairClient.Import.External
       Lib
   other-modules:
       Paths_eclair_client
