@@ -25,7 +25,6 @@ stdenv.mkDerivation {
     eclair
     postgresql
     /* Utils */
-    jdk11
     git
     nix-prefetch-scripts
     openssh
@@ -33,7 +32,6 @@ stdenv.mkDerivation {
     protobuf
     cacert
     xxd
-    jq
   ];
 
   TERM="xterm-256color";

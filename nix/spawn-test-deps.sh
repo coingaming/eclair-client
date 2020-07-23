@@ -10,8 +10,9 @@ echo "starting bitcoind..."
 bitcoind -datadir=$BTCD_DIR
 echo "sleeping for 3s to prevent bitcoind/Eclair race condition..."
 sleep 3;
-bitcoin-cli generatetoaddress 101 2NE5UEcr8VJMby5G2ACRDzwTHPybeHuZ4kw
-bitcoin-cli getblockchaininfo
+bitcoin-cli -datadir=$BTCD_DIR -rpcport=18443 \
+  generatetoaddress 101 2NE5UEcr8VJMby5G2ACRDzwTHPybeHuZ4kw
+bitcoin-cli -datadir=$BTCD_DIR -rpcport=18443 getblockchaininfo
 echo "bitcoind has been started!"
 
 #

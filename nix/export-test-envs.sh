@@ -18,9 +18,9 @@ export BTC_RPC_URL="http://localhost:18443"
 #
 
 export ECLAIR_MERCHANT_DIR="$THIS_DIR/.eclair-merchant"
-alias eclair-cli-merchant="eclair-cli -p developer -a localhost:8080"
+alias eclair-merchant="eclair-cli -p developer -a localhost:8080"
 export ECLAIR_CUSTOMER_DIR="$THIS_DIR/.eclair-customer"
-alias eclair-cli-customer="eclair-cli -p developer -a localhost:8081"
+alias eclair-customer="eclair-cli -p developer -a localhost:8081"
 
 #
 # app
