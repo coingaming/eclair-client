@@ -14,8 +14,8 @@ with nixpkgs;
 
 let callPackage = lib.callPackageWith haskellPackages;
     pkg = callPackage ./pkg.nix {inherit stdenv;};
-    systemDeps = [ protobuf makeWrapper cacert ];
-    testDeps = [ postgresql ];
+    systemDeps = [ makeWrapper cacert ];
+    testDeps = [ bitcoin eclair ];
 in
   haskell.lib.overrideCabal pkg (drv: {
     setupHaskellDepends =
@@ -26,10 +26,10 @@ in
       if drv ? "testSystemDepends"
       then drv.testSystemDepends ++ testDeps
       else testDeps;
-    isExecutable = true;
+    isExecutable = false;
     enableSharedExecutables = false;
     enableLibraryProfiling = false;
-    isLibrary = false;
+    isLibrary = true;
     doHaddock = false;
     preCheck = ''
       source ./nix/export-test-envs.sh;
@@ -38,10 +38,5 @@ in
     '';
     postCheck = ''
       sh ./nix/shutdown-test-deps.sh
-    '';
-    postFixup = "rm -rf $out/lib $out/nix-support $out/share/doc";
-    postInstall = ''
-      wrapProgram "$out/bin/eclair-client-exe" \
-        --set SYSTEM_CERTIFICATE_PATH "${cacert}/etc/ssl/certs"
     '';
   })

@@ -23,10 +23,13 @@ export ECLAIR_CUSTOMER_DIR="$THIS_DIR/.eclair-customer"
 alias eclair-customer="eclair-cli -p developer -a localhost:8081"
 
 #
-# app
+# lib
 #
 
-export ECLAIR_CLIENT_LOG_ENV="dev"
-export ECLAIR_CLIENT_LOG_FORMAT="Bracket" # Bracket | JSON
-export ECLAIR_CLIENT_LIBPQ_CONN_STR="postgresql://nixbld1@localhost/eclair-client"
-export ECLAIR_CLIENT_ENDPOINT_PORT="3000"
+export ECLAIR_CLIENT_ENV='
+{
+  "host":"localhost",
+  "port":8080,
+  "password":"developer"
+}
+'

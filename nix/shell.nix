@@ -23,13 +23,11 @@ stdenv.mkDerivation {
     /* Apps */
     bitcoin
     eclair
-    postgresql
     /* Utils */
     git
     nix-prefetch-scripts
     openssh
     cabal2nix
-    protobuf
     cacert
     xxd
   ];

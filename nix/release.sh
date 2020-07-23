@@ -6,7 +6,7 @@ set -e
 
 (cd ./nix/ && cabal2nix ./.. > ./pkg.nix)
 
-NIXPKGS_ALLOW_BROKEN=1 nix-build ./nix/docker.nix \
+NIXPKGS_ALLOW_BROKEN=1 nix-build ./nix/default.nix \
   -I ssh-config-file=/tmp/.ssh/config \
   --argstr hexOrganization heathmont \
   --argstr hexApiKey $HEX_API_KEY \
