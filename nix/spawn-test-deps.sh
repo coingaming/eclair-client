@@ -8,9 +8,9 @@ set -m
 
 echo "starting bitcoind..."
 bitcoind -datadir=$BTCD_DIR
-bitcoin-cli -rpcwait -datadir=$BTCD_DIR -rpcport=18443 \
-  generatetoaddress 101 2NE5UEcr8VJMby5G2ACRDzwTHPybeHuZ4kw
-bitcoin-cli -rpcwait -datadir=$BTCD_DIR -rpcport=18443 getblockchaininfo
+alias bitcoin-cli="bitcoin-cli -rpcwait -datadir=$BTCD_DIR -rpcport=18443"
+bitcoin-cli generatetoaddress 101 "$(bitcoin-cli getnewaddress)"
+bitcoin-cli getblockchaininfo
 echo "bitcoind has been started!"
 
 #
