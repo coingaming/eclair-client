@@ -52,6 +52,7 @@ dependencies:
 - text
 - bytestring
 - base64-bytestring
+- aeson
 # threads
 - async
 - stm

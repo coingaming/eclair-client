@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: bb06e5a58ea111f599f5ab948ecb1b03d494cf6b1bb32bb50cb5c6cc2b129577
+-- hash: a9ecf8095a6d96f3c85cf30ca4cbc99371096a33dbca509d18b4cb8ee61e9355
 
 name:           eclair-client
 version:        0.1.0.0
@@ -29,6 +29,7 @@ library
   exposed-modules:
       EclairClient
       EclairClient.Data.Type
+      EclairClient.Data.Void
       EclairClient.Import
       EclairClient.Import.External
       EclairClient.RPC
@@ -39,7 +40,8 @@ library
   default-extensions: NoImplicitPrelude MultiParamTypeClasses LambdaCase OverloadedStrings ScopedTypeVariables TupleSections
   ghc-options: -Weverything -Werror -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-missing-local-signatures -Wno-monomorphism-restriction
   build-depends:
-      async
+      aeson
+    , async
     , base >=4.7 && <5
     , base64-bytestring
     , bytestring
@@ -94,7 +96,8 @@ test-suite eclair-client-test
   default-extensions: NoImplicitPrelude MultiParamTypeClasses LambdaCase OverloadedStrings ScopedTypeVariables TupleSections
   ghc-options: -Weverything -Werror -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-missing-local-signatures -Wno-monomorphism-restriction -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      async
+      aeson
+    , async
     , base >=4.7 && <5
     , base64-bytestring
     , bytestring

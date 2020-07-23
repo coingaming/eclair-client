@@ -4,6 +4,7 @@ module EclairClient.Data.Type
     EclairAuthHeader (..),
     EclairNetworkManager (..),
     EclairEnv (..),
+    BitcoinAddress (..),
     newEclairEnv,
   )
 where
@@ -22,6 +23,8 @@ newtype EclairPassword = EclairPassword ByteString
 newtype EclairAuthHeader = EclairAuthHeader Header
 
 newtype EclairNetworkManager = EclairNetworkManager Manager
+
+newtype BitcoinAddress = BitcoinAddress Text
 
 data EclairEnv
   = EclairEnv
@@ -53,3 +56,7 @@ newEclairEnv eu ep = do
         eclairAuthHeader = newEclairAuthHeader ep,
         eclairNetworkManager = EclairNetworkManager manager
       }
+
+instance FromJSON BitcoinAddress where
+  parseJSON (String x) = pure $ BitcoinAddress x
+  parseJSON _ = fail "BitcoinAddress should be an JSON String"
