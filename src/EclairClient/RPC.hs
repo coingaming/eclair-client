@@ -11,19 +11,17 @@ import Data.ByteString.Lazy as BL (ByteString)
 import EclairClient.Data.GetInfo as GetInfo (GetInfoResponse (..))
 import EclairClient.Import
 import Network.HTTP.Client
-  ( RequestBody (RequestBodyLBS),
-    Response (..),
+  ( Response (..),
     httpLbs,
     method,
     parseRequest,
     queryString,
-    requestBody,
     requestHeaders,
     responseStatus,
   )
 import Network.HTTP.Types.Method (StdMethod (..), renderStdMethod)
 import Network.HTTP.Types.Status (ok200)
-import Network.HTTP.Types.URI (Query, renderQuery)
+import Network.HTTP.Types.URI (renderQuery)
 
 type RpcResult a = IO (Either (Response BL.ByteString) a)
 
@@ -32,16 +30,11 @@ data RpcArgs a
       { rpcEnv :: EclairEnv,
         rpcMethod :: StdMethod,
         rpcUrlPath :: String,
-        --
-        -- TODO : remove it if url query string is
-        -- not used in Eclair API
-        --
-        rpcUrlQuery :: Query,
-        rpcReqBody :: Maybe a
+        rpcRequest :: a
       }
 
 rpc ::
-  (ToJSON a, FromJSON b) =>
+  (QueryLike a, FromJSON b) =>
   RpcArgs a ->
   IO (Either (Response BL.ByteString) b)
 rpc
@@ -49,22 +42,19 @@ rpc
     { rpcEnv,
       rpcMethod,
       rpcUrlPath,
-      rpcUrlQuery,
-      rpcReqBody
+      rpcRequest
     } = do
     req0 <- parseRequest $ coerce (eclairUrl rpcEnv) <> rpcUrlPath
     let req1 =
           req0
             { method = renderStdMethod rpcMethod,
-              queryString = renderQuery False rpcUrlQuery,
-              requestHeaders = [coerce $ eclairAuthHeader rpcEnv]
+              queryString = renderQuery False $ toQuery rpcRequest,
+              requestHeaders =
+                [ coerce $ eclairAuthHeader rpcEnv,
+                  ("Content-Type", "application/x-www-form-urlencoded")
+                ]
             }
-    let req2 =
-          maybe
-            req1
-            (\b -> req1 {requestBody = RequestBodyLBS $ encode b})
-            rpcReqBody
-    res <- httpLbs req2 $ coerce $ eclairNetworkManager rpcEnv
+    res <- httpLbs req1 $ coerce $ eclairNetworkManager rpcEnv
     return $
       if responseStatus res == ok200
         then first (const res) $ eitherDecode $ responseBody res
@@ -77,8 +67,7 @@ getInfo env =
       { rpcEnv = env,
         rpcMethod = POST,
         rpcUrlPath = "/getinfo",
-        rpcUrlQuery = [],
-        rpcReqBody = Nothing :: Maybe VoidRequest
+        rpcRequest = VoidRequest
       }
 
 getNewAddress :: EclairEnv -> IO (Either (Response BL.ByteString) BitcoinAddress)
@@ -88,6 +77,5 @@ getNewAddress env =
       { rpcEnv = env,
         rpcMethod = POST,
         rpcUrlPath = "/getnewaddress",
-        rpcUrlQuery = [],
-        rpcReqBody = Nothing :: Maybe VoidRequest
+        rpcRequest = VoidRequest
       }

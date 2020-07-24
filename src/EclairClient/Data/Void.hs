@@ -12,16 +12,15 @@ data VoidRequest
   = VoidRequest
       {
       }
-  deriving (Generic, Show)
 
 data VoidResponse
   = VoidResponse
       {
       }
-  deriving (Generic, Show, Read, Eq)
+  deriving (Generic)
 
-instance ToJSON VoidRequest where
-  toJSON _ = object []
+instance QueryLike VoidRequest where
+  toQuery = const []
 
 instance FromJSON VoidResponse where
   parseJSON _ = pure VoidResponse

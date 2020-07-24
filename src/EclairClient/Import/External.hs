@@ -46,5 +46,7 @@ import Data.Time.Clock as X
   )
 import Data.Word as X (Word64)
 import GHC.Generics as X (Generic)
+import Network.HTTP.Types as X (QueryLike (..))
 import Network.HTTP.Types.Header as X (Header)
+import Network.HTTP.Types.URI as X (Query)
 import Universum as X hiding ((^.), atomically, on, set)
