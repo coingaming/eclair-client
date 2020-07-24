@@ -1,3 +1,6 @@
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
 module EclairClient.Data.Type
   ( EclairUrl (..),
     EclairPassword (..),
@@ -5,6 +8,7 @@ module EclairClient.Data.Type
     EclairNetworkManager (..),
     EclairEnv (..),
     BitcoinAddress (..),
+    NodeId (..),
     newEclairEnv,
   )
 where
@@ -24,14 +28,18 @@ newtype EclairAuthHeader = EclairAuthHeader Header
 
 newtype EclairNetworkManager = EclairNetworkManager Manager
 
-newtype BitcoinAddress = BitcoinAddress Text
-
 data EclairEnv
   = EclairEnv
       { eclairUrl :: EclairUrl,
         eclairAuthHeader :: EclairAuthHeader,
         eclairNetworkManager :: EclairNetworkManager
       }
+
+newtype BitcoinAddress = BitcoinAddress Text
+  deriving newtype (ToJSON, FromJSON)
+
+newtype NodeId = NodeId Text
+  deriving newtype (ToJSON, FromJSON)
 
 newEclairAuthHeader :: EclairPassword -> EclairAuthHeader
 newEclairAuthHeader =
@@ -42,12 +50,11 @@ newEclairAuthHeader =
     . (":" <>)
     . coerce
 
-newEclairEnv :: MonadUnliftIO m => EclairUrl -> EclairPassword -> m EclairEnv
+newEclairEnv :: EclairUrl -> EclairPassword -> IO EclairEnv
 newEclairEnv eu ep = do
   manager <-
-    liftIO
-      $ newManager
-      $ mkManagerSettings
+    newManager $
+      mkManagerSettings
         (TLSSettings $ defaultParamsClient "" "")
         Nothing
   return $
@@ -56,7 +63,3 @@ newEclairEnv eu ep = do
         eclairAuthHeader = newEclairAuthHeader ep,
         eclairNetworkManager = EclairNetworkManager manager
       }
-
-instance FromJSON BitcoinAddress where
-  parseJSON (String x) = pure $ BitcoinAddress x
-  parseJSON _ = fail "BitcoinAddress should be an JSON String"

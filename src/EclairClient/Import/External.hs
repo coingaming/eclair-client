@@ -35,7 +35,6 @@ import Data.Either.Extra as X (fromEither)
 import Data.List as X (partition)
 import Data.Maybe as X (catMaybes)
 import Data.Monoid as X (All (..), mconcat)
-import Data.Pool as X (Pool, destroyAllResources)
 import Data.Ratio as X ((%), denominator, numerator)
 import Data.Time.Clock as X
   ( DiffTime,
@@ -46,50 +45,6 @@ import Data.Time.Clock as X
     secondsToDiffTime,
   )
 import Data.Word as X (Word64)
-import Database.Esqueleto as X
-  ( Entity (..),
-    PersistField,
-    PersistFieldSql,
-    PersistValue (..),
-    RawSql (..),
-    SqlBackend,
-    SqlPersistT,
-    getBy,
-    insertBy,
-    putMany,
-    rawExecute,
-    rawSql,
-    runMigration,
-    runSqlPool,
-  )
-import Database.Persist as X (selectList)
-import Database.Persist.Postgresql as X (ConnectionString, createPostgresqlPool)
-import Database.Persist.TH as X (derivePersistField)
 import GHC.Generics as X (Generic)
-import Katip as X
-  ( ColorStrategy (..),
-    Environment (..),
-    Katip (..),
-    KatipContext (..),
-    KatipContextT,
-    LogContexts,
-    LogEnv,
-    Namespace,
-    Severity (..),
-    Verbosity (..),
-    bracketFormat,
-    closeScribes,
-    defaultScribeSettings,
-    initLogEnv,
-    jsonFormat,
-    logStr,
-    logTM,
-    mkHandleScribeWithFormatter,
-    permitItem,
-    registerScribe,
-    runKatipContextT,
-  )
 import Network.HTTP.Types.Header as X (Header)
-import Network.Wai as X (Middleware)
 import Universum as X hiding ((^.), atomically, on, set)
-import UnliftIO as X (MonadUnliftIO (..), UnliftIO (..), withRunInIO)

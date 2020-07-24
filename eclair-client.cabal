@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a9ecf8095a6d96f3c85cf30ca4cbc99371096a33dbca509d18b4cb8ee61e9355
+-- hash: 722f51c262591bed1ba65fffcca65b2f38e466ba1ec57a3a7458b415a41350bd
 
 name:           eclair-client
 version:        0.1.0.0
@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       EclairClient
+      EclairClient.Data.GetInfo
       EclairClient.Data.Type
       EclairClient.Data.Void
       EclairClient.Import
@@ -37,7 +38,7 @@ library
       Paths_eclair_client
   hs-source-dirs:
       src
-  default-extensions: NoImplicitPrelude MultiParamTypeClasses LambdaCase OverloadedStrings ScopedTypeVariables TupleSections
+  default-extensions: NoImplicitPrelude MultiParamTypeClasses LambdaCase OverloadedStrings ScopedTypeVariables TupleSections DeriveGeneric
   ghc-options: -Weverything -Werror -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-missing-local-signatures -Wno-monomorphism-restriction
   build-depends:
       aeson
@@ -46,54 +47,35 @@ library
     , base64-bytestring
     , bytestring
     , chronos
-    , concur-core
-    , concur-replica
     , conduit
     , connection
-    , containers
-    , envparse
-    , esqueleto
     , extra
-    , file-embed
     , hspec
     , hspec-wai
     , http-client
     , http-client-tls
     , http-conduit
     , http-types
-    , katip
-    , lens
-    , microlens
-    , monad-logger
-    , persistent
-    , persistent-migration
-    , persistent-postgresql
-    , persistent-template
-    , replica
-    , resource-pool
     , retry
     , stm
-    , template-haskell
     , text
     , time
     , tls
     , unbounded-delays
     , universum
-    , unliftio
-    , wai
-    , wai-middleware-static-embedded
-    , warp
-    , websockets
   default-language: Haskell2010
 
 test-suite eclair-client-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      EclairClient.RPCSpec
+      EclairClient.TestEnv
+      EclairClient.TestOrphan
       Paths_eclair_client
   hs-source-dirs:
       test
-  default-extensions: NoImplicitPrelude MultiParamTypeClasses LambdaCase OverloadedStrings ScopedTypeVariables TupleSections
+  default-extensions: NoImplicitPrelude MultiParamTypeClasses LambdaCase OverloadedStrings ScopedTypeVariables TupleSections DeriveGeneric
   ghc-options: -Weverything -Werror -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missed-specialisations -Wno-all-missed-specialisations -Wno-unsafe -Wno-safe -Wno-missing-local-signatures -Wno-monomorphism-restriction -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
@@ -102,43 +84,21 @@ test-suite eclair-client-test
     , base64-bytestring
     , bytestring
     , chronos
-    , concur-core
-    , concur-replica
     , conduit
     , connection
-    , containers
     , eclair-client
-    , envparse
-    , esqueleto
     , extra
-    , file-embed
     , hspec
     , hspec-wai
     , http-client
     , http-client-tls
     , http-conduit
     , http-types
-    , katip
-    , lens
-    , microlens
-    , monad-logger
-    , persistent
-    , persistent-migration
-    , persistent-postgresql
-    , persistent-template
-    , replica
-    , resource-pool
     , retry
     , stm
-    , template-haskell
     , text
     , time
     , tls
     , unbounded-delays
     , universum
-    , unliftio
-    , wai
-    , wai-middleware-static-embedded
-    , warp
-    , websockets
   default-language: Haskell2010

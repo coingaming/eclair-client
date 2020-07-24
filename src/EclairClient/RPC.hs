@@ -2,11 +2,13 @@
 {-# LANGUAGE NamedFieldPuns #-}
 
 module EclairClient.RPC
-  ( getNewAddress,
+  ( getInfo,
+    getNewAddress,
   )
 where
 
 import Data.ByteString.Lazy as BL (ByteString)
+import EclairClient.Data.GetInfo as GetInfo (GetInfoResponse (..))
 import EclairClient.Import
 import Network.HTTP.Client
   ( RequestBody (RequestBodyLBS),
@@ -23,6 +25,8 @@ import Network.HTTP.Types.Method (StdMethod (..), renderStdMethod)
 import Network.HTTP.Types.Status (ok200)
 import Network.HTTP.Types.URI (Query, renderQuery)
 
+type RpcResult a = IO (Either (Response BL.ByteString) a)
+
 data RpcArgs a
   = RpcArgs
       { rpcEnv :: EclairEnv,
@@ -37,9 +41,9 @@ data RpcArgs a
       }
 
 rpc ::
-  (ToJSON a, FromJSON b, MonadUnliftIO m) =>
+  (ToJSON a, FromJSON b) =>
   RpcArgs a ->
-  m (Either (Response BL.ByteString) b)
+  IO (Either (Response BL.ByteString) b)
 rpc
   RpcArgs
     { rpcEnv,
@@ -48,31 +52,36 @@ rpc
       rpcUrlQuery,
       rpcReqBody
     } = do
-    req0 <- liftIO $ parseRequest $ coerce (eclairUrl rpcEnv) <> rpcUrlPath
+    req0 <- parseRequest $ coerce (eclairUrl rpcEnv) <> rpcUrlPath
     let req1 =
           req0
             { method = renderStdMethod rpcMethod,
               queryString = renderQuery False rpcUrlQuery,
-              requestHeaders =
-                [ coerce $ eclairAuthHeader rpcEnv,
-                  ("Content-Type", "application/json")
-                ]
+              requestHeaders = [coerce $ eclairAuthHeader rpcEnv]
             }
     let req2 =
           maybe
             req1
             (\b -> req1 {requestBody = RequestBodyLBS $ encode b})
             rpcReqBody
-    res <- liftIO $ httpLbs req2 $ coerce $ eclairNetworkManager rpcEnv
+    res <- httpLbs req2 $ coerce $ eclairNetworkManager rpcEnv
     return $
       if responseStatus res == ok200
         then first (const res) $ eitherDecode $ responseBody res
         else Left res
 
-getNewAddress ::
-  MonadUnliftIO m =>
-  EclairEnv ->
-  m (Either (Response BL.ByteString) BitcoinAddress)
+getInfo :: EclairEnv -> RpcResult GetInfo.GetInfoResponse
+getInfo env =
+  rpc $
+    RpcArgs
+      { rpcEnv = env,
+        rpcMethod = POST,
+        rpcUrlPath = "/getinfo",
+        rpcUrlQuery = [],
+        rpcReqBody = Nothing :: Maybe VoidRequest
+      }
+
+getNewAddress :: EclairEnv -> IO (Either (Response BL.ByteString) BitcoinAddress)
 getNewAddress env =
   rpc $
     RpcArgs
