@@ -2,13 +2,18 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 module EclairClient.Data.Type
-  ( EclairUrl (..),
+  ( LnHost (..),
+    LnPort (..),
+    EclairApiUrl (..),
     EclairPassword (..),
     EclairAuthHeader (..),
     EclairNetworkManager (..),
     EclairEnv (..),
     BitcoinAddress (..),
     NodeId (..),
+    ChannelId (..),
+    Satoshi (..),
+    MilliSatoshi (..),
     newEclairEnv,
   )
 where
@@ -20,7 +25,13 @@ import Network.HTTP.Client (Manager, newManager)
 import Network.HTTP.Client.TLS (mkManagerSettings)
 import Network.TLS (defaultParamsClient)
 
-newtype EclairUrl = EclairUrl String
+newtype LnHost = LnHost Text
+  deriving newtype (ToJSON, FromJSON)
+
+newtype LnPort = LnPort Word64
+  deriving newtype (ToJSON, FromJSON)
+
+newtype EclairApiUrl = EclairApiUrl String
 
 newtype EclairPassword = EclairPassword ByteString
 
@@ -30,7 +41,9 @@ newtype EclairNetworkManager = EclairNetworkManager Manager
 
 data EclairEnv
   = EclairEnv
-      { eclairUrl :: EclairUrl,
+      { eclairLnHost :: LnHost,
+        eclairLnPort :: LnPort,
+        eclairApiUrl :: EclairApiUrl,
         eclairAuthHeader :: EclairAuthHeader,
         eclairNetworkManager :: EclairNetworkManager
       }
@@ -39,6 +52,15 @@ newtype BitcoinAddress = BitcoinAddress Text
   deriving newtype (ToJSON, FromJSON)
 
 newtype NodeId = NodeId Text
+  deriving newtype (ToJSON, FromJSON)
+
+newtype ChannelId = ChannelId Text
+  deriving newtype (ToJSON, FromJSON)
+
+newtype Satoshi = Satoshi Word64
+  deriving newtype (ToJSON, FromJSON)
+
+newtype MilliSatoshi = MilliSatoshi Word64
   deriving newtype (ToJSON, FromJSON)
 
 newEclairAuthHeader :: EclairPassword -> EclairAuthHeader
@@ -50,8 +72,13 @@ newEclairAuthHeader =
     . (":" <>)
     . coerce
 
-newEclairEnv :: EclairUrl -> EclairPassword -> IO EclairEnv
-newEclairEnv eu ep = do
+newEclairEnv ::
+  LnHost ->
+  LnPort ->
+  EclairApiUrl ->
+  EclairPassword ->
+  IO EclairEnv
+newEclairEnv lh lp au p = do
   manager <-
     newManager $
       mkManagerSettings
@@ -59,7 +86,9 @@ newEclairEnv eu ep = do
         Nothing
   return $
     EclairEnv
-      { eclairUrl = eu,
-        eclairAuthHeader = newEclairAuthHeader ep,
+      { eclairLnHost = lh,
+        eclairLnPort = lp,
+        eclairApiUrl = au,
+        eclairAuthHeader = newEclairAuthHeader p,
         eclairNetworkManager = EclairNetworkManager manager
       }

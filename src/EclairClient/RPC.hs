@@ -4,18 +4,23 @@
 module EclairClient.RPC
   ( getInfo,
     getNewAddress,
+    connect,
+    openChannel,
   )
 where
 
-import Data.ByteString.Lazy as BL (ByteString)
-import EclairClient.Data.GetInfo as GetInfo (GetInfoResponse (..))
+import Data.ByteString.Lazy as BL (ByteString, fromStrict)
+import qualified EclairClient.Data.Connect as Connect
+import qualified EclairClient.Data.GetInfo as GetInfo
+import qualified EclairClient.Data.OpenChannel as OpenChannel
 import EclairClient.Import
 import Network.HTTP.Client
-  ( Response (..),
+  ( RequestBody (RequestBodyLBS),
+    Response (..),
     httpLbs,
     method,
     parseRequest,
-    queryString,
+    requestBody,
     requestHeaders,
     responseStatus,
   )
@@ -25,10 +30,13 @@ import Network.HTTP.Types.URI (renderQuery)
 
 type RpcResult a = IO (Either (Response BL.ByteString) a)
 
+--
+-- TODO : remove me, just use
+-- 3 args in rpc (eta reduction optimizations etc)
+--
 data RpcArgs a
   = RpcArgs
       { rpcEnv :: EclairEnv,
-        rpcMethod :: StdMethod,
         rpcUrlPath :: String,
         rpcRequest :: a
       }
@@ -40,15 +48,19 @@ rpc ::
 rpc
   RpcArgs
     { rpcEnv,
-      rpcMethod,
       rpcUrlPath,
       rpcRequest
     } = do
-    req0 <- parseRequest $ coerce (eclairUrl rpcEnv) <> rpcUrlPath
+    req0 <- parseRequest $ coerce (eclairApiUrl rpcEnv) <> rpcUrlPath
     let req1 =
           req0
-            { method = renderStdMethod rpcMethod,
-              queryString = renderQuery False $ toQuery rpcRequest,
+            { method =
+                renderStdMethod POST,
+              requestBody =
+                RequestBodyLBS
+                  $ BL.fromStrict
+                  $ renderQuery False
+                  $ toQuery rpcRequest,
               requestHeaders =
                 [ coerce $ eclairAuthHeader rpcEnv,
                   ("Content-Type", "application/x-www-form-urlencoded")
@@ -60,22 +72,38 @@ rpc
         then first (const res) $ eitherDecode $ responseBody res
         else Left res
 
-getInfo :: EclairEnv -> RpcResult GetInfo.GetInfoResponse
+getInfo :: EclairEnv -> RpcResult GetInfo.Response
 getInfo env =
   rpc $
     RpcArgs
       { rpcEnv = env,
-        rpcMethod = POST,
         rpcUrlPath = "/getinfo",
         rpcRequest = VoidRequest
       }
 
-getNewAddress :: EclairEnv -> IO (Either (Response BL.ByteString) BitcoinAddress)
+getNewAddress :: EclairEnv -> RpcResult BitcoinAddress
 getNewAddress env =
   rpc $
     RpcArgs
       { rpcEnv = env,
-        rpcMethod = POST,
         rpcUrlPath = "/getnewaddress",
         rpcRequest = VoidRequest
+      }
+
+connect :: EclairEnv -> Connect.Request -> RpcResult VoidResponse
+connect env req =
+  rpc $
+    RpcArgs
+      { rpcEnv = env,
+        rpcUrlPath = "/connect",
+        rpcRequest = req
+      }
+
+openChannel :: EclairEnv -> OpenChannel.Request -> RpcResult ChannelId
+openChannel env req =
+  rpc $
+    RpcArgs
+      { rpcEnv = env,
+        rpcUrlPath = "/open",
+        rpcRequest = req
       }

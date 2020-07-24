@@ -6,11 +6,15 @@ module EclairClient.TestOrphan
   )
 where
 
-import EclairClient.Data.GetInfo as GetInfo (GetInfoResponse (..))
+import qualified EclairClient.Data.GetInfo as GetInfo
 import EclairClient.Import
 
 deriving instance Show BitcoinAddress
 
 deriving instance Show NodeId
 
-deriving instance Show GetInfo.GetInfoResponse
+deriving instance Show GetInfo.Response
+
+deriving instance Show VoidResponse
+
+deriving instance Show ChannelId

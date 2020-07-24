@@ -1,14 +1,14 @@
 module EclairClient.Data.GetInfo
-  ( GetInfoResponse (..),
+  ( Response (..),
   )
 where
 
 import EclairClient.Import
 
-newtype GetInfoResponse
-  = GetInfoResponse
+newtype Response
+  = Response
       { nodeId :: NodeId
       }
   deriving (Generic)
 
-instance FromJSON GetInfoResponse
+instance FromJSON Response
