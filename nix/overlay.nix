@@ -11,7 +11,7 @@
       doJailbreak = self.haskell.lib.doJailbreak;
     in
     {
-        eclair = import (fetchTarball "https://github.com/coingaming/eclair/tarball/69fc70d2279c824f1746231c707a31c190e32000") {};
+        eclair = import (fetchTarball "https://github.com/coingaming/eclair/tarball/bac50d977aaf9df5d2ea2d01e32789ffdf20f77e") {};
         haskell-ide = import (fetchTarball "https://github.com/tim2CF/ultimate-haskell-ide/tarball/master") {};
         haskellPackages = super.haskell.packages.ghc865.extend(
           self': super': {
