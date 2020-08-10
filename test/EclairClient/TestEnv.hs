@@ -8,9 +8,12 @@ module EclairClient.TestEnv
   )
 where
 
-import Data.ByteString.Lazy as BL
+import Data.ByteString.Lazy as BL hiding (all)
 import EclairClient
+import qualified EclairClient.Data.Channel as Channel
+import qualified EclairClient.Data.CloseChannel as CloseChannel
 import EclairClient.Import
+import EclairClient.TestOrphan ()
 import Network.Bitcoin as BTC (Client, HexString, getClient)
 import Network.Bitcoin.Mining (generateToAddress)
 import Network.HTTP.Client (Response (..))
@@ -47,8 +50,26 @@ mine101 env = do
 setupEnv :: IO ()
 setupEnv = do
   ce <- newCustomerEnv
+  cs <-
+    liftRpcResult
+      =<< listChannels ce
+  _ <-
+    liftRpcResult
+      =<< closeChannel (CloseChannel.Request $ Channel.channelId <$> cs) ce
+  -- ??? _ <- delay 300000
   _ <- mine101 ce
+  _ <- waitForChannel (const (== Channel.CLOSED)) ce
   return ()
+
+waitForChannel :: (ChannelId -> Channel.ChannelState -> Bool) -> EclairEnv -> IO ()
+waitForChannel f env = do
+  cs <-
+    liftRpcResult
+      =<< listChannels env
+  print cs
+  if all (\x -> f (Channel.channelId x) (Channel.state x)) cs
+    then return ()
+    else waitForChannel f env
 
 liftRpcResult :: Either (Response BL.ByteString) a -> IO a
 liftRpcResult (Right x) = return x

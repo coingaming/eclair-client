@@ -25,7 +25,7 @@ data ChannelState
   | WAIT_FOR_REMOTE_PUBLISH_FUTURE_COMMITMENT
   | ERR_FUNDING_LOST
   | ERR_INFORMATION_LEAK
-  deriving (Generic)
+  deriving (Generic, Eq)
 
 instance FromJSON ChannelState
 
