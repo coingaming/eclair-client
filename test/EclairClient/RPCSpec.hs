@@ -27,7 +27,7 @@ spec = do
       ce <- newCustomerEnv
       GetInfo.Response mid <- liftRpcResult =<< getInfo me
       let req = Connect.Request mid (eclairLnHost me) (Just $ eclairLnPort me)
-      res <- connect ce req
+      res <- connect req ce
       res `shouldSatisfy` isRight
   describe "openChannel" $ do
     it "openChannel succeeds" $ do
@@ -40,5 +40,5 @@ spec = do
                 OpenChannel.fundingSatoshis = Satoshi 1000000,
                 OpenChannel.pushMsat = Just $ MilliSatoshi 500
               }
-      res <- openChannel ce req
+      res <- openChannel req ce
       res `shouldSatisfy` isRight

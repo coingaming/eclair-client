@@ -30,80 +30,44 @@ import Network.HTTP.Types.URI (renderQuery)
 
 type RpcResult a = IO (Either (Response BL.ByteString) a)
 
---
--- TODO : remove me, just use
--- 3 args in rpc (eta reduction optimizations etc)
---
-data RpcArgs a
-  = RpcArgs
-      { rpcEnv :: EclairEnv,
-        rpcUrlPath :: String,
-        rpcRequest :: a
-      }
+newtype RpcUrlPath = RpcUrlPath String
 
 rpc ::
   (QueryLike a, FromJSON b) =>
-  RpcArgs a ->
+  RpcUrlPath ->
+  a ->
+  EclairEnv ->
   IO (Either (Response BL.ByteString) b)
-rpc
-  RpcArgs
-    { rpcEnv,
-      rpcUrlPath,
-      rpcRequest
-    } = do
-    req0 <- parseRequest $ coerce (eclairApiUrl rpcEnv) <> rpcUrlPath
-    let req1 =
-          req0
-            { method =
-                renderStdMethod POST,
-              requestBody =
-                RequestBodyLBS
-                  $ BL.fromStrict
-                  $ renderQuery False
-                  $ toQuery rpcRequest,
-              requestHeaders =
-                [ coerce $ eclairAuthHeader rpcEnv,
-                  ("Content-Type", "application/x-www-form-urlencoded")
-                ]
-            }
-    res <- httpLbs req1 $ coerce $ eclairNetworkManager rpcEnv
-    return $
-      if responseStatus res == ok200
-        then first (const res) $ eitherDecode $ responseBody res
-        else Left res
+rpc rpcUrlPath rpcRequest rpcEnv = do
+  req0 <- parseRequest $ coerce (eclairApiUrl rpcEnv) <> coerce rpcUrlPath
+  let req1 =
+        req0
+          { method =
+              renderStdMethod POST,
+            requestBody =
+              RequestBodyLBS
+                $ BL.fromStrict
+                $ renderQuery False
+                $ toQuery rpcRequest,
+            requestHeaders =
+              [ coerce $ eclairAuthHeader rpcEnv,
+                ("Content-Type", "application/x-www-form-urlencoded")
+              ]
+          }
+  res <- httpLbs req1 $ coerce $ eclairNetworkManager rpcEnv
+  return $
+    if responseStatus res == ok200
+      then first (const res) $ eitherDecode $ responseBody res
+      else Left res
 
 getInfo :: EclairEnv -> RpcResult GetInfo.Response
-getInfo env =
-  rpc $
-    RpcArgs
-      { rpcEnv = env,
-        rpcUrlPath = "/getinfo",
-        rpcRequest = VoidRequest
-      }
+getInfo = rpc (RpcUrlPath "/getinfo") VoidRequest
 
 getNewAddress :: EclairEnv -> RpcResult BitcoinAddress
-getNewAddress env =
-  rpc $
-    RpcArgs
-      { rpcEnv = env,
-        rpcUrlPath = "/getnewaddress",
-        rpcRequest = VoidRequest
-      }
+getNewAddress = rpc (RpcUrlPath "/getnewaddress") VoidRequest
 
-connect :: EclairEnv -> Connect.Request -> RpcResult VoidResponse
-connect env req =
-  rpc $
-    RpcArgs
-      { rpcEnv = env,
-        rpcUrlPath = "/connect",
-        rpcRequest = req
-      }
+connect :: Connect.Request -> EclairEnv -> RpcResult VoidResponse
+connect = rpc $ RpcUrlPath "/connect"
 
-openChannel :: EclairEnv -> OpenChannel.Request -> RpcResult ChannelId
-openChannel env req =
-  rpc $
-    RpcArgs
-      { rpcEnv = env,
-        rpcUrlPath = "/open",
-        rpcRequest = req
-      }
+openChannel :: OpenChannel.Request -> EclairEnv -> RpcResult ChannelId
+openChannel = rpc $ RpcUrlPath "/open"
