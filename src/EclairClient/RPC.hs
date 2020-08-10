@@ -8,11 +8,13 @@ module EclairClient.RPC
     openChannel,
     createInvoice,
     listChannels,
+    closeChannel,
   )
 where
 
 import Data.ByteString.Lazy as BL (ByteString, fromStrict)
 import qualified EclairClient.Data.Channel as Channel
+import qualified EclairClient.Data.CloseChannel as CloseChannel
 import qualified EclairClient.Data.Connect as Connect
 import qualified EclairClient.Data.CreateInvoice as CreateInvoice
 import qualified EclairClient.Data.GetInfo as GetInfo
@@ -82,3 +84,9 @@ createInvoice = rpc $ RpcUrlPath "/createinvoice"
 
 listChannels :: EclairEnv -> RpcResult [Channel.Channel]
 listChannels = rpc (RpcUrlPath "/channels") VoidRequest
+
+--
+-- TODO : Ok/Unit type for these responses?
+--
+closeChannel :: CloseChannel.Request -> EclairEnv -> RpcResult VoidResponse
+closeChannel = rpc $ RpcUrlPath "/close"

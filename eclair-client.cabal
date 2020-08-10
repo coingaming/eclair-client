@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 15137e152436d91ab2c1855266bfe9a5636c803835fc90fe78517095dae54b21
+-- hash: 614c0689de08bd7b2e45024c6c53c1ed19fe85d8cf9489fb88aeae5a4acdf1b9
 
 name:           eclair-client
 version:        0.1.0.0
@@ -29,6 +29,7 @@ library
   exposed-modules:
       EclairClient
       EclairClient.Data.Channel
+      EclairClient.Data.CloseChannel
       EclairClient.Data.Connect
       EclairClient.Data.CreateInvoice
       EclairClient.Data.GetInfo

@@ -1,6 +1,8 @@
 module EclairClient.RPCSpec (spec) where
 
 import EclairClient
+import qualified EclairClient.Data.Channel as Channel
+import qualified EclairClient.Data.CloseChannel as CloseChannel
 import qualified EclairClient.Data.Connect as Connect
 import qualified EclairClient.Data.CreateInvoice as CreateInvoice
 import qualified EclairClient.Data.GetInfo as GetInfo
@@ -67,3 +69,10 @@ spec = do
       cs <- liftRpcResult =<< listChannels ce
       liftIO $ print cs
       cs `shouldSatisfy` (> 0) . length
+  describe "closeChannel" $ do
+    it "closeChannel succeeds" $ do
+      setupEnv
+      ce <- newCustomerEnv
+      cs <- liftRpcResult =<< listChannels ce
+      res <- closeChannel (CloseChannel.Request $ Channel.channelId <$> cs) ce
+      res `shouldSatisfy` isRight
