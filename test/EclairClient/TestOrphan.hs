@@ -6,6 +6,7 @@ module EclairClient.TestOrphan
   )
 where
 
+import EclairClient.Data.Channel
 import qualified EclairClient.Data.GetInfo as GetInfo
 import EclairClient.Data.Invoice
 import EclairClient.Import
@@ -31,3 +32,7 @@ deriving instance Show InvoiceExpirySeconds
 deriving instance Show Satoshi
 
 deriving instance Show MilliSatoshi
+
+deriving instance Show Channel
+
+deriving instance Show ChannelState

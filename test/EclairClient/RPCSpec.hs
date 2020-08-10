@@ -60,3 +60,10 @@ spec = do
               }
       res <- openChannel req ce
       res `shouldSatisfy` isRight
+  describe "listChannels" $ do
+    it "listChannels succeeds" $ do
+      setupEnv
+      ce <- newCustomerEnv
+      cs <- liftRpcResult =<< listChannels ce
+      liftIO $ print cs
+      cs `shouldSatisfy` (> 0) . length

@@ -7,10 +7,12 @@ module EclairClient.RPC
     connect,
     openChannel,
     createInvoice,
+    listChannels,
   )
 where
 
 import Data.ByteString.Lazy as BL (ByteString, fromStrict)
+import qualified EclairClient.Data.Channel as Channel
 import qualified EclairClient.Data.Connect as Connect
 import qualified EclairClient.Data.CreateInvoice as CreateInvoice
 import qualified EclairClient.Data.GetInfo as GetInfo
@@ -77,3 +79,6 @@ openChannel = rpc $ RpcUrlPath "/open"
 
 createInvoice :: CreateInvoice.Request -> EclairEnv -> RpcResult Invoice
 createInvoice = rpc $ RpcUrlPath "/createinvoice"
+
+listChannels :: EclairEnv -> RpcResult [Channel.Channel]
+listChannels = rpc (RpcUrlPath "/channels") VoidRequest

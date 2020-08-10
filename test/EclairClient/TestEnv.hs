@@ -3,6 +3,7 @@ module EclairClient.TestEnv
     newCustomerEnv,
     newBtcClient,
     setupEnv,
+    mine101,
     liftRpcResult,
   )
 where
@@ -10,7 +11,7 @@ where
 import Data.ByteString.Lazy as BL
 import EclairClient
 import EclairClient.Import
-import Network.Bitcoin as BTC (Client, getClient)
+import Network.Bitcoin as BTC (Client, HexString, getClient)
 import Network.Bitcoin.Mining (generateToAddress)
 import Network.HTTP.Client (Response (..))
 
@@ -37,12 +38,16 @@ newBtcClient =
     "developer"
     "developer"
 
+mine101 :: EclairEnv -> IO [BTC.HexString]
+mine101 env = do
+  bc <- newBtcClient
+  addr <- liftRpcResult =<< getNewAddress env
+  generateToAddress bc 101 (coerce addr) Nothing
+
 setupEnv :: IO ()
 setupEnv = do
-  bc <- newBtcClient
-  env <- newCustomerEnv
-  addr <- liftRpcResult =<< getNewAddress env
-  _ <- generateToAddress bc 101 (coerce addr) Nothing
+  ce <- newCustomerEnv
+  _ <- mine101 ce
   return ()
 
 liftRpcResult :: Either (Response BL.ByteString) a -> IO a
