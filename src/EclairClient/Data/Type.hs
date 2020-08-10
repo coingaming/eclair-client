@@ -14,6 +14,10 @@ module EclairClient.Data.Type
     ChannelId (..),
     Satoshi (..),
     MilliSatoshi (..),
+    InvoiceExpirySeconds (..),
+    PaymentPreimage (..),
+    PaymentHash (..),
+    InvoiceDescription (..),
     newEclairEnv,
   )
 where
@@ -58,10 +62,22 @@ newtype ChannelId = ChannelId Text
   deriving newtype (ToJSON, FromJSON)
 
 newtype Satoshi = Satoshi Word64
-  deriving newtype (ToJSON, FromJSON)
+  deriving newtype (ToJSON, FromJSON, Eq, Ord)
 
 newtype MilliSatoshi = MilliSatoshi Word64
+  deriving newtype (ToJSON, FromJSON, Eq, Ord)
+
+newtype InvoiceExpirySeconds = InvoiceExpirySeconds Word64
+  deriving newtype (ToJSON, FromJSON, Eq, Ord)
+
+newtype PaymentPreimage = PaymentPreimage Text
   deriving newtype (ToJSON, FromJSON)
+
+newtype PaymentHash = PaymentHash Text
+  deriving newtype (ToJSON, FromJSON)
+
+newtype InvoiceDescription = InvoiceDescription Text
+  deriving newtype (ToJSON, FromJSON, Eq)
 
 newEclairAuthHeader :: EclairPassword -> EclairAuthHeader
 newEclairAuthHeader =

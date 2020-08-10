@@ -6,12 +6,15 @@ module EclairClient.RPC
     getNewAddress,
     connect,
     openChannel,
+    createInvoice,
   )
 where
 
 import Data.ByteString.Lazy as BL (ByteString, fromStrict)
 import qualified EclairClient.Data.Connect as Connect
+import qualified EclairClient.Data.CreateInvoice as CreateInvoice
 import qualified EclairClient.Data.GetInfo as GetInfo
+import EclairClient.Data.Invoice (Invoice)
 import qualified EclairClient.Data.OpenChannel as OpenChannel
 import EclairClient.Import
 import Network.HTTP.Client
@@ -71,3 +74,6 @@ connect = rpc $ RpcUrlPath "/connect"
 
 openChannel :: OpenChannel.Request -> EclairEnv -> RpcResult ChannelId
 openChannel = rpc $ RpcUrlPath "/open"
+
+createInvoice :: CreateInvoice.Request -> EclairEnv -> RpcResult Invoice
+createInvoice = rpc $ RpcUrlPath "/createinvoice"

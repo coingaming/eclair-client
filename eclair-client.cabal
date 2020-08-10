@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: cb8cb97a3f9700331959147ac215b4ee45398024407f5c110ca003832b7889ce
+-- hash: 534ce942523d1952f2d38249f0b4c81f394ed820e8ca20fdcb4bffcb918f900d
 
 name:           eclair-client
 version:        0.1.0.0
@@ -29,7 +29,9 @@ library
   exposed-modules:
       EclairClient
       EclairClient.Data.Connect
+      EclairClient.Data.CreateInvoice
       EclairClient.Data.GetInfo
+      EclairClient.Data.Invoice
       EclairClient.Data.OpenChannel
       EclairClient.Data.Type
       EclairClient.Data.Void
@@ -59,6 +61,7 @@ library
     , http-client-tls
     , http-conduit
     , http-types
+    , network-bitcoin
     , retry
     , stm
     , text
@@ -97,6 +100,7 @@ test-suite eclair-client-test
     , http-client-tls
     , http-conduit
     , http-types
+    , network-bitcoin
     , retry
     , stm
     , text

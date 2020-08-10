@@ -1,7 +1,8 @@
 { mkDerivation, aeson, async, base, base64-bytestring, bytestring
 , chronos, conduit, connection, extra, hpack, hspec, hspec-wai
-, http-client, http-client-tls, http-conduit, http-types, retry
-, stdenv, stm, text, time, tls, unbounded-delays, universum
+, http-client, http-client-tls, http-conduit, http-types
+, network-bitcoin, retry, stdenv, stm, text, time, tls
+, unbounded-delays, universum
 }:
 mkDerivation {
   pname = "eclair-client";
@@ -10,15 +11,15 @@ mkDerivation {
   libraryHaskellDepends = [
     aeson async base base64-bytestring bytestring chronos conduit
     connection extra hspec hspec-wai http-client http-client-tls
-    http-conduit http-types retry stm text time tls unbounded-delays
-    universum
+    http-conduit http-types network-bitcoin retry stm text time tls
+    unbounded-delays universum
   ];
   libraryToolDepends = [ hpack ];
   testHaskellDepends = [
     aeson async base base64-bytestring bytestring chronos conduit
     connection extra hspec hspec-wai http-client http-client-tls
-    http-conduit http-types retry stm text time tls unbounded-delays
-    universum
+    http-conduit http-types network-bitcoin retry stm text time tls
+    unbounded-delays universum
   ];
   prePatch = "hpack";
   homepage = "https://github.com/githubuser/eclair-client#readme";

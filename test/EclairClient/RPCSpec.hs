@@ -2,7 +2,9 @@ module EclairClient.RPCSpec (spec) where
 
 import EclairClient
 import qualified EclairClient.Data.Connect as Connect
+import qualified EclairClient.Data.CreateInvoice as CreateInvoice
 import qualified EclairClient.Data.GetInfo as GetInfo
+import qualified EclairClient.Data.Invoice as Invoice
 import qualified EclairClient.Data.OpenChannel as OpenChannel
 import EclairClient.Import
 import EclairClient.TestEnv
@@ -16,6 +18,21 @@ spec = do
       env <- newMerchantEnv
       res <- getInfo env
       res `shouldSatisfy` isRight
+  describe "createInvoice" $ do
+    it "createInvoice succeeds" $ do
+      env <- newMerchantEnv
+      let desc = InvoiceDescription "reckless"
+      let amount = MilliSatoshi 10
+      let expiry = InvoiceExpirySeconds 3600
+      res <- createInvoice (CreateInvoice.Request desc amount expiry Nothing) env
+      res
+        `shouldSatisfy` ( \case
+                            Left _ -> False
+                            Right i ->
+                              (Invoice.description i == desc)
+                                && (Invoice.amount i == amount)
+                                && (Invoice.expiry i == expiry)
+                        )
   describe "getNewAddress" $ do
     it "getNewAddress succeeds" $ do
       env <- newMerchantEnv
@@ -31,6 +48,7 @@ spec = do
       res `shouldSatisfy` isRight
   describe "openChannel" $ do
     it "openChannel succeeds" $ do
+      setupEnv
       me <- newMerchantEnv
       ce <- newCustomerEnv
       GetInfo.Response mid <- liftRpcResult =<< getInfo me
